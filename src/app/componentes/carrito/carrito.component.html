@@ -1,0 +1,77 @@
+<div class="page-container">
+
+  <header>
+    <h1 class="titulo-pagina">Tu carrito</h1>
+    <p class="subtitulo-pagina">Revisá tus productos y confirmá la compra para generar la factura</p>
+  </header>
+
+  <div class="layout" *ngIf="carrito.items.length > 0; else vacio">
+
+    <section class="card-custom">
+      <h2 class="section-title">Productos ({{ carrito.cantidadTotal() }})</h2>
+
+      <p class="mensaje" *ngIf="mensaje">{{ mensaje }}</p>
+
+      <div class="item" *ngFor="let i of carrito.items">
+        <div class="datos">
+          <b>{{ i.nombre }}</b>
+          <small>{{ i.marca }} · {{ i.precioUnitario | currency:'ARS':'symbol-narrow':'1.0-0' }} c/u</small>
+        </div>
+
+        <div class="cantidad">
+          <button type="button" (click)="carrito.restar(i)" aria-label="Quitar uno">−</button>
+          <span>{{ i.cantidad }}</span>
+          <button type="button" (click)="carrito.sumar(i)" [disabled]="i.cantidad >= i.stock" aria-label="Agregar uno">+</button>
+        </div>
+
+        <b class="subtotal">{{ i.cantidad * i.precioUnitario | currency:'ARS':'symbol-narrow':'1.0-0' }}</b>
+
+        <button type="button" class="quitar" (click)="carrito.quitar(i)" aria-label="Eliminar">🗑</button>
+      </div>
+    </section>
+
+    <aside class="card-custom resumen">
+      <h2 class="section-title">Resumen</h2>
+
+      <div class="linea">
+        <span>Productos distintos</span><b>{{ carrito.items.length }}</b>
+      </div>
+      <div class="linea">
+        <span>Unidades</span><b>{{ carrito.cantidadTotal() }}</b>
+      </div>
+      <div class="linea total">
+        <span>Total</span>
+        <b>{{ carrito.total() | currency:'ARS':'symbol-narrow':'1.0-0' }}</b>
+      </div>
+
+      <button type="button" class="btn btn-verde btn-ancho" [disabled]="procesando" (click)="confirmarCompra()">
+        {{ procesando ? 'Procesando...' : 'Confirmar compra' }}
+      </button>
+      <button type="button" class="btn btn-gris btn-ancho seguir" (click)="seguirComprando()">
+        Seguir comprando
+      </button>
+    </aside>
+  </div>
+
+  <ng-template #vacio>
+    <section class="card-custom vacio" *ngIf="!compraOk">
+      <span class="emoji">🛒</span>
+      <h2>Tu carrito está vacío</h2>
+      <p>Agregá productos desde la galería para empezar tu compra.</p>
+      <button type="button" class="btn btn-primario" (click)="seguirComprando()">Ver productos</button>
+    </section>
+  </ng-template>
+
+  <div class="modal-fondo" *ngIf="compraOk">
+    <div class="modal-detalle">
+      <span class="check">✅</span>
+      <h2>¡Compra realizada!</h2>
+      <p>Se registró tu factura por</p>
+      <p class="monto">{{ totalComprado | currency:'ARS':'symbol-narrow':'1.0-0' }}</p>
+      <div class="acciones-modal">
+        <button type="button" class="btn btn-primario" (click)="verFacturas()">Ver mis facturas</button>
+        <button type="button" class="btn btn-gris" (click)="seguirComprando()">Seguir comprando</button>
+      </div>
+    </div>
+  </div>
+</div>

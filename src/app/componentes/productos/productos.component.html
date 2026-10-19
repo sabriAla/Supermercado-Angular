@@ -1,0 +1,147 @@
+<div class="page-container">
+
+  <header>
+    <h1 class="titulo-pagina">Nuestros productos</h1>
+    <p class="subtitulo-pagina">
+      {{ filtrados.length }} productos {{ sesion.esAdmin() ? 'en el catálogo' : 'disponibles para comprar' }}
+    </p>
+  </header>
+
+  <p class="mensaje" *ngIf="mensaje">{{ mensaje }}</p>
+
+  <section class="barra-filtros">
+    <input
+      class="buscador"
+      type="search"
+      placeholder="🔍  Buscar por nombre, marca o código de barras"
+      [(ngModel)]="busqueda"
+    />
+
+    <select class="orden" [(ngModel)]="orden">
+      <option value="nombre">Ordenar: Nombre (A-Z)</option>
+      <option value="precioAsc">Ordenar: Precio menor a mayor</option>
+      <option value="precioDesc">Ordenar: Precio mayor a menor</option>
+    </select>
+  </section>
+
+  <section class="chips">
+    <button
+      *ngFor="let c of categorias"
+      type="button"
+      class="chip"
+      [class.on]="categoria === c"
+      (click)="categoria = c"
+    >
+      {{ c === 'TODAS' ? 'Todas' : textoCategoria(c) }}
+    </button>
+  </section>
+
+  <p class="cargando" *ngIf="cargando">Cargando productos...</p>
+
+  <section class="galeria">
+    <article class="producto" *ngFor="let p of filtrados" [class.agotado]="p.cantidad === 0">
+
+      <div class="foto">
+        <img *ngIf="p.imagenUrl" [src]="p.imagenUrl" [alt]="p.nombre" loading="lazy"
+             (error)="p.imagenUrl = undefined" />
+        <span class="emoji" *ngIf="!p.imagenUrl">{{ emoji(p) }}</span>
+        <span class="categoria">{{ textoCategoria(p.categoria) }}</span>
+        <span class="badge estado" [ngClass]="claseStock(p)">{{ textoStock(p) }}</span>
+      </div>
+
+      <div class="info">
+        <small class="marca">{{ p.marca }}</small>
+        <h3>{{ p.nombre }}</h3>
+        <p class="descripcion">{{ p.descripcion }}</p>
+
+        <div class="fila-precio">
+          <span class="precio">{{ p.precioUnitario | currency:'ARS':'symbol-narrow':'1.0-0' }}</span>
+          <span class="stock">Stock: {{ p.cantidad }}</span>
+        </div>
+
+        <!-- ADMIN: editar -->
+        <button
+          *ngIf="sesion.esAdmin()"
+          type="button"
+          class="btn btn-primario btn-ancho"
+          (click)="abrirEdicion(p)"
+        >
+          ✏️ Editar
+        </button>
+
+        <!-- CLIENTE: agregar al carrito -->
+        <button
+          *ngIf="!sesion.esAdmin()"
+          type="button"
+          class="btn btn-verde btn-ancho"
+          [disabled]="sinMasStock(p)"
+          (click)="agregar(p)"
+        >
+          {{ p.cantidad === 0 ? 'Sin stock' : (carrito.cantidadEnCarrito(p.id) > 0 ? 'Agregar otro (' + carrito.cantidadEnCarrito(p.id) + ' en carrito)' : '+ Agregar al carrito') }}
+        </button>
+      </div>
+    </article>
+  </section>
+
+  <p class="vacio" *ngIf="!cargando && filtrados.length === 0">
+    No se encontraron productos con esos filtros.
+  </p>
+
+  <!-- Ventana de edición (solo admin) -->
+  <div class="modal-fondo" *ngIf="editando" (click)="cerrarEdicion()">
+    <div class="modal-caja" (click)="$event.stopPropagation()">
+      <h2 class="section-title">Editar producto</h2>
+
+      <form [formGroup]="formEdicion" (ngSubmit)="guardarEdicion()" class="formulario-grid">
+
+        <div class="form-group">
+          <label for="e-nombre">Nombre</label>
+          <input id="e-nombre" type="text" formControlName="nombre">
+          <span class="ayuda-error" *ngIf="invalidoEdicion('nombre')">Mínimo 3 caracteres</span>
+        </div>
+
+        <div class="form-group">
+          <label for="e-marca">Marca</label>
+          <input id="e-marca" type="text" formControlName="marca">
+          <span class="ayuda-error" *ngIf="invalidoEdicion('marca')">La marca es obligatoria</span>
+        </div>
+
+        <div class="form-group">
+          <label for="e-categoria">Categoría</label>
+          <select id="e-categoria" formControlName="categoria">
+            <option *ngFor="let c of categoriasEdicion" [value]="c">{{ c }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="e-codigo">Código de barras</label>
+          <input id="e-codigo" type="text" formControlName="codigoDeBarras">
+          <span class="ayuda-error" *ngIf="invalidoEdicion('codigoDeBarras')">Mínimo 8 caracteres</span>
+        </div>
+
+        <div class="form-group">
+          <label for="e-precio">Precio unitario ($)</label>
+          <input id="e-precio" type="number" min="1" formControlName="precioUnitario">
+          <span class="ayuda-error" *ngIf="invalidoEdicion('precioUnitario')">Ingresá un precio mayor a 0</span>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="e-desc">Descripción</label>
+          <input id="e-desc" type="text" formControlName="descripcion">
+        </div>
+
+        <div class="form-group full-width">
+          <label for="e-img">URL de la imagen (opcional)</label>
+          <input id="e-img" type="url" formControlName="imagenUrl" placeholder="https://...">
+        </div>
+
+        <div class="full-width acciones-modal">
+          <button type="button" class="btn btn-gris" (click)="cerrarEdicion()">Cancelar</button>
+          <button type="submit" class="btn btn-primario">Guardar cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" *ngIf="aviso">✓ {{ aviso }}</div>
+</div>

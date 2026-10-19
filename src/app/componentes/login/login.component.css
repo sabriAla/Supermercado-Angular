@@ -1,0 +1,146 @@
+:host {
+  display: flex;
+  min-height: 100vh;
+}
+
+.login-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.container {
+  width: 100%;
+  max-width: 400px;
+  padding: 40px 35px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, .2);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, .4), 0 0 20px rgba(0, 180, 216, .25);
+  animation: fadeIn .7s ease-out;
+}
+
+.brand { margin-bottom: 26px; }
+.brand .icon {
+  display: inline-block;
+  font-size: 46px;
+  filter: drop-shadow(0 0 8px rgba(0, 180, 216, .6));
+  animation: float 3s ease-in-out infinite;
+}
+.titulo-sistema {
+  margin: 4px 0 6px;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--navy);
+  letter-spacing: .5px;
+}
+.titulo-sistema span {
+  background: linear-gradient(90deg, var(--azul), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.brand p { margin: 0; color: var(--gris); font-size: 14px; }
+
+.formulario { display: flex; flex-direction: column; gap: 16px; }
+.formulario input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid var(--borde);
+  border-radius: 10px;
+  font-size: 15px;
+  background: var(--fondo-input);
+  color: var(--texto);
+  outline: none;
+  transition: all .3s ease;
+}
+.formulario input:focus {
+  border-color: var(--azul);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(0, 119, 182, .18);
+  transform: translateY(-2px);
+}
+
+.mensaje-error {
+  margin-top: 18px;
+  padding: 12px;
+  border-left: 4px solid #ef4444;
+  border-radius: 8px;
+  background: #fef2f2;
+  color: #ef4444;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.demo {
+  margin: 22px 0 0;
+  padding: 12px;
+  border-radius: 10px;
+  background: #e0f2fe;
+  color: #075985;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.demo code { background: #fff; padding: 1px 6px; border-radius: 5px; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+/* ---------- Pestañas Iniciar sesión / Registrarse ---------- */
+.tabs {
+  display: flex;
+  gap: 6px;
+  padding: 5px;
+  margin-bottom: 22px;
+  border-radius: 12px;
+  background: #f0f5f1;
+}
+.tabs button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--gris);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+.tabs button.on {
+  background: #fff;
+  color: var(--azul);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .1);
+}
+
+/* ---------- Registro ---------- */
+.campo-registro { display: flex; flex-direction: column; gap: 6px; text-align: left; }
+.pista { color: var(--azul); font-size: 12px; line-height: 1.4; }
+.error-campo { color: #b91c1c; font-size: 12px; }
+
+.mensaje-ok {
+  margin: 0 0 16px;
+  padding: 12px;
+  border-left: 4px solid #22c55e;
+  border-radius: 8px;
+  background: #f0fdf4;
+  color: #166534;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+}
+
+.volver {
+  display: inline-block;
+  margin-top: 20px;
+  color: var(--gris);
+  font-size: 13px;
+  text-decoration: none;
+}
+.volver:hover { color: var(--azul); }

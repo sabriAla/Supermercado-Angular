@@ -1,0 +1,64 @@
+<nav *ngIf="mostrarNav()">
+  <span class="marca">🛒 Super<span>Mercado</span></span>
+
+  <button routerLink="/productos" routerLinkActive="activo">Productos</button>
+
+  <!-- Carrito: cliente logueado -->
+  <button *ngIf="isLoggedIn() && !sesion.esAdmin()" routerLink="/carrito" routerLinkActive="activo">
+    Carrito
+    <span class="contador" *ngIf="carrito.cantidadTotal() > 0">{{ carrito.cantidadTotal() }}</span>
+  </button>
+
+  <!-- Carrito: invitado (muestra el anuncio) -->
+  <button *ngIf="!isLoggedIn()" (click)="aviso.mostrar('Para ver tu carrito necesitás iniciar sesión o registrarte.')">
+    Carrito
+  </button>
+
+  <button *ngIf="isLoggedIn()" routerLink="/facturas" routerLinkActive="activo">
+    {{ sesion.esAdmin() ? 'Facturas' : 'Mis compras' }}
+  </button>
+
+  <button *ngIf="!isLoggedIn()" (click)="aviso.mostrar('Para ver tus compras necesitás iniciar sesión o registrarte.')">
+    Mis compras
+  </button>
+
+  <button *ngIf="sesion.esAdmin()" routerLink="/gestion" routerLinkActive="activo">
+    Gestión de stock
+  </button>
+
+  <!-- Usuario logueado -->
+  <ng-container *ngIf="isLoggedIn(); else invitado">
+    <span class="usuario">
+      {{ sesion.username }}
+      <small>{{ sesion.esAdmin() ? 'Administrador' : 'Cliente' }}</small>
+    </span>
+
+    <button class="salir" (click)="logout()">Cerrar sesión</button>
+  </ng-container>
+
+  <!-- Invitado: esquina con los dos botones -->
+  <ng-template #invitado>
+    <span class="esquina-invitado">
+      <button type="button" (click)="irALogin('login')">Iniciar sesión</button>
+      <button type="button" class="registro" (click)="irALogin('registro')">Registrarse</button>
+    </span>
+  </ng-template>
+</nav>
+
+<router-outlet></router-outlet>
+
+<!-- Anuncio: hay que registrarse -->
+<div class="aviso-fondo" *ngIf="aviso.visible" (click)="aviso.cerrar()">
+  <div class="aviso-caja" (click)="$event.stopPropagation()">
+    <span class="aviso-icono">🔒</span>
+    <h2>Necesitás una cuenta</h2>
+    <p>{{ aviso.mensaje }}</p>
+
+    <div class="aviso-botones">
+      <button type="button" class="btn btn-primario" (click)="irALogin('login')">Iniciar sesión</button>
+      <button type="button" class="btn btn-verde" (click)="irALogin('registro')">Registrarse</button>
+    </div>
+
+    <button type="button" class="aviso-cerrar" (click)="aviso.cerrar()">Ahora no</button>
+  </div>
+</div>

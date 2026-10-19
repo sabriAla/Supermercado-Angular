@@ -1,0 +1,112 @@
+<div class="page-container">
+
+  <header>
+    <h1 class="titulo-pagina">Gestión de productos y stock</h1>
+    <p class="subtitulo-pagina">Solo para administradores</p>
+  </header>
+
+  <p class="mensaje" *ngIf="mensaje">{{ mensaje }}</p>
+  <p class="mensaje exito" *ngIf="exito">✓ {{ exito }}</p>
+
+  <section class="card-custom">
+    <h2 class="section-title">Agregar producto</h2>
+
+    <form [formGroup]="formulario" (ngSubmit)="guardarProducto()" class="formulario-grid">
+
+      <div class="form-group">
+        <label for="nombre">Nombre</label>
+        <input id="nombre" type="text" formControlName="nombre" placeholder="Ej: Leche entera 1L">
+        <span class="ayuda-error" *ngIf="invalido('nombre')">Mínimo 3 caracteres</span>
+      </div>
+
+      <div class="form-group">
+        <label for="marca">Marca</label>
+        <input id="marca" type="text" formControlName="marca" placeholder="Ej: La Serenísima">
+        <span class="ayuda-error" *ngIf="invalido('marca')">La marca es obligatoria</span>
+      </div>
+
+      <div class="form-group">
+        <label for="categoria">Categoría</label>
+        <select id="categoria" formControlName="categoria">
+          <option *ngFor="let c of categorias" [value]="c">{{ c }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="codigo">Código de barras</label>
+        <input id="codigo" type="text" formControlName="codigoDeBarras" placeholder="13 dígitos">
+        <span class="ayuda-error" *ngIf="invalido('codigoDeBarras')">Mínimo 8 caracteres</span>
+      </div>
+
+      <div class="form-group">
+        <label for="precio">Precio unitario ($)</label>
+        <input id="precio" type="number" min="1" formControlName="precioUnitario" placeholder="0">
+        <span class="ayuda-error" *ngIf="invalido('precioUnitario')">Ingresá un precio mayor a 0</span>
+      </div>
+
+      <div class="form-group">
+        <label for="cantidad">Stock inicial</label>
+        <input id="cantidad" type="number" min="0" formControlName="cantidad">
+      </div>
+
+      <div class="form-group full-width">
+        <label for="descripcion">Descripción</label>
+        <input id="descripcion" type="text" formControlName="descripcion" placeholder="Descripción breve">
+      </div>
+
+      <div class="form-group full-width">
+        <label for="imagen">URL de la imagen (opcional)</label>
+        <input id="imagen" type="url" formControlName="imagenUrl" placeholder="https://...">
+      </div>
+
+      <div class="full-width">
+        <button type="submit" class="btn btn-primario btn-ancho">Agregar producto</button>
+      </div>
+    </form>
+  </section>
+
+    <section class="card-custom">
+    <div class="cabecera-tabla">
+      <h2 class="section-title">Stock actual</h2>
+      <input class="campo buscar" type="search" placeholder="🔍 Buscar producto" [(ngModel)]="filtro">
+    </div>
+
+    <div class="table-responsive">
+      <table class="tabla-custom">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Categoría</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Agregar stock</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of filtrados">
+            <td>
+              <b>{{ p.nombre }}</b><br>
+              <small class="chico">{{ p.marca }} · {{ p.codigoDeBarras }}</small>
+            </td>
+            <td>{{ p.categoria }}</td>
+            <td>{{ p.precioUnitario | currency:'ARS':'symbol-narrow':'1.0-0' }}</td>
+            <td><span class="badge" [ngClass]="claseStock(p)">{{ p.cantidad }}</span></td>
+            <td>
+              <div class="sumar">
+                <input class="campo" type="number" min="1" placeholder="Cant." [(ngModel)]="sumar[p.id!]" (keyup.enter)="agregarStock(p)">
+                <button type="button" class="btn btn-verde" (click)="agregarStock(p)" [disabled]="!sumar[p.id!] || sumar[p.id!] <= 0">+ Agregar</button>
+              </div>
+            </td>
+            <td>
+              <button type="button" class="btn btn-rojo btn-eliminar" (click)="eliminarProducto(p)">🗑 Eliminar</button>
+            </td>
+          </tr>
+          <tr *ngIf="filtrados.length === 0">
+            <td colspan="6" class="empty-msg">No hay productos.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

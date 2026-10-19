@@ -1,0 +1,7 @@
+.cabecera-tabla { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+.buscar { max-width: 260px; margin-bottom: 14px; }
+.chico { color: var(--gris); font-size: 12px; }
+.sumar { display: flex; gap: 8px; align-items: center; }
+.sumar .campo { width: 90px; padding: 9px 12px; }
+.sumar .btn { padding: 9px 14px; font-size: 13px; }
+.btn-eliminar { padding: 9px 14px; font-size: 13px; }

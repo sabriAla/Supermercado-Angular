@@ -1,0 +1,58 @@
+<main class="login-wrapper">
+  <div class="container">
+    <div class="brand">
+      <span class="icon">🛒</span>
+      <h1 class="titulo-sistema">Super<span>Mercado</span></h1>
+      <p>{{ modo === 'login' ? 'Ingresá para comprar' : 'Creá tu cuenta para comprar' }}</p>
+    </div>
+
+    <div class="tabs">
+      <button type="button" [class.on]="modo === 'login'" (click)="cambiarModo('login')">Iniciar sesión</button>
+      <button type="button" [class.on]="modo === 'registro'" (click)="cambiarModo('registro')">Registrarse</button>
+    </div>
+
+    <p *ngIf="mensajeOk" class="mensaje-ok">{{ mensajeOk }}</p>
+
+    <!-- INICIAR SESIÓN -->
+    <form *ngIf="modo === 'login'" [formGroup]="formLogin" (ngSubmit)="onLogin()" class="formulario">
+      <input type="text" formControlName="username" placeholder="Nombre y apellido (no el email)" autocomplete="username" />
+      <input type="password" formControlName="password" placeholder="Contraseña" autocomplete="current-password" />
+
+      <button type="submit" class="btn btn-primario btn-ancho" [disabled]="formLogin.invalid">
+        Ingresar
+      </button>
+    </form>
+
+    <!-- REGISTRARSE -->
+    <form *ngIf="modo === 'registro'" [formGroup]="formRegistro" (ngSubmit)="onRegistro()" class="formulario">
+
+      <div class="campo-registro">
+        <input type="text" formControlName="nombreCompleto" placeholder="Nombre completo" autocomplete="name" />
+        <small class="pista">ℹ️ Este nombre va a ser tu <b>nombre de usuario</b> para iniciar sesión.</small>
+        <small class="error-campo" *ngIf="invalido('nombreCompleto')">Ingresá nombre y apellido (solo letras)</small>
+      </div>
+
+      <div class="campo-registro">
+        <input type="email" formControlName="email" placeholder="Gmail (tucorreo@gmail.com)" autocomplete="email" />
+        <small class="error-campo" *ngIf="invalido('email')">Ingresá un correo válido</small>
+      </div>
+
+      <div class="campo-registro">
+        <input type="password" formControlName="password" placeholder="Contraseña (mínimo 6 caracteres)" autocomplete="new-password" />
+        <small class="error-campo" *ngIf="invalido('password')">Mínimo 6 caracteres</small>
+      </div>
+
+      <button type="submit" class="btn btn-primario btn-ancho">Crear cuenta</button>
+    </form>
+
+    <p *ngIf="mensajeError" class="mensaje-error">{{ mensajeError }}</p>
+
+    <a class="volver" routerLink="/productos">← Seguir viendo los productos</a>
+
+    <p *ngIf="modoDemo" class="demo">
+      <b>Modo demo</b> (sin backend)<br>
+      Administrador: usuario <code>admin</code> con cualquier contraseña de 4+ caracteres.<br>
+      Clientes: se crean desde <b>Registrarse</b>.
+    </p>
+  </div>
+</main>

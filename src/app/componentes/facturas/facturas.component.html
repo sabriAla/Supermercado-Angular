@@ -1,0 +1,60 @@
+<div class="page-container">
+
+  <header>
+    <h1 class="titulo-pagina">{{ esAdmin ? 'Facturas emitidas' : 'Mis compras' }}</h1>
+    <p class="subtitulo-pagina">Tocá una factura para ver el detalle de los productos</p>
+  </header>
+
+  <p class="mensaje" *ngIf="mensaje">{{ mensaje }}</p>
+
+  <section class="resumen" *ngIf="facturas.length > 0">
+    <div class="tile">
+      <span>Facturas</span>
+      <b>{{ facturas.length }}</b>
+    </div>
+    <div class="tile">
+      <span>{{ esAdmin ? 'Total facturado' : 'Total gastado' }}</span>
+      <b>{{ totalFacturado | currency:'ARS':'symbol-narrow':'1.0-0' }}</b>
+    </div>
+  </section>
+
+  <section class="card-custom lista">
+    <div class="vacio" *ngIf="facturas.length === 0">
+      <span>🧾</span>
+      <p>Todavía no hay facturas registradas.</p>
+    </div>
+
+    <div class="factura" *ngFor="let f of facturas" [class.abierta]="abierta === f.id">
+
+      <button type="button" class="cabecera" (click)="alternar(f)">
+        <span class="numero">#{{ f.id }}</span>
+        <span class="fecha">{{ f.fecha | date:'dd/MM/yyyy HH:mm' }}</span>
+        <span class="cliente" *ngIf="esAdmin">👤 {{ f.cliente }}</span>
+        <span class="unidades">{{ unidades(f) }} u.</span>
+        <b class="total">{{ f.total | currency:'ARS':'symbol-narrow':'1.0-0' }}</b>
+        <span class="flecha">{{ abierta === f.id ? '▲' : '▼' }}</span>
+      </button>
+
+      <div class="detalle table-responsive" *ngIf="abierta === f.id">
+        <table class="tabla-custom">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Precio unitario</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let d of f.detalles ?? []">
+              <td>{{ d.nombreProducto }}</td>
+              <td>{{ d.cantidad }}</td>
+              <td>{{ d.precioUnitario | currency:'ARS':'symbol-narrow':'1.0-0' }}</td>
+              <td><b>{{ d.subtotal | currency:'ARS':'symbol-narrow':'1.0-0' }}</b></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</div>
